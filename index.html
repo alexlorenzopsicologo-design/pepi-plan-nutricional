@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan Nutricional — Pepi</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #FAF7F2;
+    --warm-white: #FFFDF9;
+    --ink: #1C1C1A;
+    --ink-soft: #3D3D39;
+    --ink-muted: #7A7A72;
+    --sage: #6B8F71;
+    --sage-light: #E8F0E9;
+    --sage-mid: #A8C4AB;
+    --amber: #C97B2E;
+    --amber-light: #FDF3E7;
+    --amber-mid: #E8B87A;
+    --terracotta: #B5503A;
+    --terracotta-light: #FAEDEA;
+    --terracotta-mid: #D9937F;
+    --border: rgba(28,28,26,0.1);
+    --border-strong: rgba(28,28,26,0.2);
+    --radius: 12px;
+    --radius-lg: 18px;
+  }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 2.5rem 2rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: rgba(107,143,113,0.15);
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: 30%;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: rgba(201,123,46,0.1);
+  }
+  .header-inner { max-width: 960px; margin: 0 auto; position: relative; z-index: 1; }
+  .header-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--sage-mid);
+    margin-bottom: .75rem;
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 500;
+    line-height: 1.2;
+    color: #fff;
+    margin-bottom: .5rem;
+  }
+  .header-sub {
+    font-size: 14px;
+    color: rgba(250,247,242,0.6);
+    font-weight: 300;
+  }
+  .header-meta {
+    display: flex; gap: 1.5rem; margin-top: 1.5rem; flex-wrap: wrap;
+  }
+  .meta-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; color: rgba(250,247,242,0.75);
+  }
+  .meta-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--sage-mid); flex-shrink: 0;
+  }
+
+  /* TABS */
+  .tabs-wrapper {
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .tabs-inner { max-width: 960px; margin: 0 auto; display: flex; }
+  .tab-btn {
+    padding: 1rem 1.5rem;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 14px; font-weight: 500;
+    color: var(--ink-muted);
+    background: none; border: none; cursor: pointer;
+    border-bottom: 2.5px solid transparent;
+    margin-bottom: -1px;
+    transition: color .2s, border-color .2s;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--ink-soft); }
+  .tab-btn.active { color: var(--ink); border-bottom-color: var(--sage); }
+
+  /* MAIN */
+  .main { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* SECTION HEADERS */
+  .section-head {
+    display: flex; align-items: baseline; gap: 1rem;
+    margin-bottom: 1.25rem; margin-top: 2rem;
+  }
+  .section-head:first-child { margin-top: 0; }
+  .section-head h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem; font-weight: 500;
+  }
+  .section-line {
+    flex: 1; height: 1px; background: var(--border);
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+  }
+  .card-sm {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+  }
+
+  /* METRIC TILES */
+  .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+  .metric-tile {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .875rem 1rem;
+  }
+  .metric-label { font-size: 11.5px; color: var(--ink-muted); font-weight: 500; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+  .metric-value { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 500; color: var(--ink); line-height: 1.1; }
+  .metric-sub { font-size: 12px; color: var(--ink-muted); margin-top: 3px; }
+
+  /* STATUS BANDS */
+  .band { border-radius: var(--radius); padding: .875rem 1.125rem; font-size: 13.5px; line-height: 1.5; }
+  .band strong { font-weight: 600; display: block; margin-bottom: 2px; }
+  .band-danger { background: var(--terracotta-light); border-left: 3px solid var(--terracotta); color: #7A2010; }
+  .band-warn { background: var(--amber-light); border-left: 3px solid var(--amber); color: #7A4A10; }
+  .band-ok { background: var(--sage-light); border-left: 3px solid var(--sage); color: #2E5232; }
+  .band-info { background: #EEF4FF; border-left: 3px solid #5680C2; color: #2A3F7A; }
+
+  /* ROWS */
+  .data-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 0; border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .data-row:last-child { border-bottom: none; }
+  .data-row .lbl { color: var(--ink-muted); }
+  .data-row .val { font-weight: 500; }
+
+  /* GRID LAYOUTS */
+  .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  @media (max-width: 640px) {
+    .g2, .g3 { grid-template-columns: 1fr; }
+  }
+
+  /* PILLS */
+  .pill-group { display: flex; flex-wrap: wrap; gap: 6px; margin-top: .5rem; }
+  .pill {
+    font-size: 12.5px; padding: 3px 12px; border-radius: 999px;
+    font-weight: 400; border: 1px solid transparent;
+  }
+  .pill-no { background: var(--terracotta-light); border-color: var(--terracotta-mid); color: #7A2010; }
+  .pill-yes { background: var(--sage-light); border-color: var(--sage-mid); color: #2E5232; }
+  .pill-maybe { background: var(--amber-light); border-color: var(--amber-mid); color: #7A4A10; }
+
+  /* MACRO BAR */
+  .macro-row { margin-bottom: 1rem; }
+  .macro-header { display: flex; justify-content: space-between; font-size: 13.5px; margin-bottom: 5px; }
+  .macro-header .name { font-weight: 500; }
+  .macro-header .amount { color: var(--ink-muted); }
+  .macro-track { height: 7px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .macro-fill { height: 100%; border-radius: 4px; }
+
+  /* DIET SECTION */
+  .day-nav {
+    display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.75rem;
+  }
+  .day-btn {
+    padding: 6px 14px; border-radius: 999px;
+    font-size: 13px; font-weight: 500;
+    background: var(--warm-white); border: 1px solid var(--border);
+    cursor: pointer; color: var(--ink-muted);
+    transition: all .2s;
+  }
+  .day-btn:hover { border-color: var(--sage-mid); color: var(--sage); }
+  .day-btn.active {
+    background: var(--sage); border-color: var(--sage);
+    color: #fff;
+  }
+
+  .day-panel { display: none; }
+  .day-panel.active { display: block; }
+
+  .meal-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .meal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: .875rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--cream);
+  }
+  .meal-time {
+    display: flex; align-items: center; gap: .75rem;
+  }
+  .meal-icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; flex-shrink: 0;
+  }
+  .icon-deayuno { background: var(--amber-light); }
+  .icon-media { background: var(--sage-light); }
+  .icon-comida { background: var(--terracotta-light); }
+  .icon-merienda { background: var(--amber-light); }
+  .icon-cena { background: #EEF4FF; }
+  .meal-name { font-weight: 500; font-size: 14.5px; }
+  .meal-kcal {
+    font-size: 13px; color: var(--ink-muted);
+    background: var(--cream); padding: 3px 10px;
+    border-radius: 999px; border: 1px solid var(--border);
+  }
+  .meal-body { padding: 1rem 1.25rem; }
+  .food-line {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 5px 0; border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .food-line:last-child { border-bottom: none; }
+  .food-name { color: var(--ink-soft); }
+  .food-weight { color: var(--ink-muted); font-size: 13px; white-space: nowrap; margin-left: 1rem; }
+  .food-note { font-size: 12px; color: var(--sage); font-style: italic; margin-top: 2px; }
+
+  .day-total {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    padding: .875rem 1.25rem;
+    background: var(--ink);
+    border-radius: var(--radius);
+    margin-top: 4px;
+  }
+  .dtotal-item { display: flex; gap: 6px; align-items: center; font-size: 13px; color: rgba(250,247,242,0.8); }
+  .dtotal-item strong { color: #fff; font-weight: 600; }
+
+  /* SIGNAL CARDS */
+  .signal-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .signal-head {
+    padding: .75rem 1.25rem;
+    font-weight: 500; font-size: 14.5px;
+    display: flex; align-items: center; gap: .75rem;
+  }
+  .signal-head .dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+  }
+  .signal-body {
+    padding: .875rem 1.25rem;
+    font-size: 14px; color: var(--ink-soft);
+    border-top: 1px solid var(--border);
+    line-height: 1.7;
+  }
+  .signal-action {
+    padding: .75rem 1.25rem;
+    font-size: 13px; color: var(--sage);
+    background: var(--sage-light);
+    border-top: 1px solid rgba(107,143,113,0.2);
+    font-weight: 500;
+  }
+  .signal-action::before { content: '→ '; }
+
+  hr.div { border: none; border-top: 1px solid var(--border); margin: 1.75rem 0; }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .tabs-inner { overflow-x: auto; }
+    .tab-btn { padding: .875rem 1rem; font-size: 13px; }
+    .header { padding: 1.75rem 1.25rem 1.5rem; }
+    .main { padding: 1.5rem 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <span class="header-tag">Plan nutricional personalizado</span>
+    <h1>Pepi Serra Viñals</h1>
+    <p class="header-sub">64 años · 81,2 kg · 1,58 m · Taller mecánico</p>
+    <div class="header-meta">
+      <div class="meta-item"><div class="meta-dot"></div>Medición: 29–31 mayo 2026</div>
+      <div class="meta-item"><div class="meta-dot"></div>Yoga 2×/semana + pasos diarios en aumento</div>
+      <div class="meta-item"><div class="meta-dot"></div>Microbiota: ADN Institut (agosto 2025)</div>
+    </div>
+  </div>
+</div>
+
+<div class="tabs-wrapper">
+  <div class="tabs-inner">
+    <button class="tab-btn active" onclick="showTab('informe')">Informe metabólico</button>
+    <button class="tab-btn" onclick="showTab('deficit')">Déficit calórico</button>
+    <button class="tab-btn" onclick="showTab('dieta')">Plan semanal</button>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ═══════════════════════════════════════ PANEL 1: INFORME ════════════════════════════════════ -->
+<div id="panel-informe" class="panel active">
+
+  <div class="section-head"><h2>Composición corporal</h2><div class="section-line"></div></div>
+
+  <div class="metrics-grid" style="margin-bottom:1rem">
+    <div class="metric-tile"><div class="metric-label">Peso</div><div class="metric-value">81,2 kg</div><div class="metric-sub">farmacia 31/05/26</div></div>
+    <div class="metric-tile"><div class="metric-label">Talla</div><div class="metric-value">1,58 m</div><div class="metric-sub">IMC: 32 (obesidad I)</div></div>
+    <div class="metric-tile"><div class="metric-label">% grasa</div><div class="metric-value">42,9%</div><div class="metric-sub">ideal ♀: 24–35%</div></div>
+    <div class="metric-tile"><div class="metric-label">Masa grasa</div><div class="metric-value">34,8 kg</div><div class="metric-sub">exceso ≈ 12–15 kg</div></div>
+    <div class="metric-tile"><div class="metric-label">Masa muscular</div><div class="metric-value">43,9 kg</div><div class="metric-sub">Tanita InnerScan</div></div>
+    <div class="metric-tile"><div class="metric-label">% agua corporal</div><div class="metric-value">39,9%</div><div class="metric-sub">bajo (normal: 45–60%)</div></div>
+    <div class="metric-tile"><div class="metric-label">Grasa visceral</div><div class="metric-value">12,5</div><div class="metric-sub">límite (saludable &lt;12)</div></div>
+    <div class="metric-tile"><div class="metric-label">Edad metabólica</div><div class="metric-value">77 a.</div><div class="metric-sub">13 años sobre la real</div></div>
+  </div>
+
+  <div class="g2" style="margin-bottom:1rem">
+    <div class="band band-warn"><strong>Agua corporal baja (39,9%)</strong>Una hidratación insuficiente interfiere con la señal de saciedad — el cuerpo confunde sed con hambre — y aumenta la fatiga. Objetivo mínimo: 1,8 L agua/día.</div>
+    <div class="band band-danger"><strong>Grasa visceral en el límite (12,5)</strong>La grasa acumulada alrededor de los órganos es el tipo más relacionado con riesgo cardiovascular y metabólico. Bajar de 12 es prioritario y se logra antes que el peso visible.</div>
+  </div>
+
+  <div class="section-head"><h2>Metabolismo basal (TMB)</h2><div class="section-line"></div></div>
+
+  <div class="g2" style="margin-bottom:1rem">
+    <div class="card">
+      <div style="font-size:12px;color:var(--ink-muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem">Valor utilizado en este plan</div>
+      <div style="font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:500;color:var(--sage)">1.416 kcal</div>
+      <div style="font-size:13px;color:var(--ink-muted);margin-top:4px">Tanita InnerScan · medición directa</div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:1rem 0">
+      <div class="data-row"><span class="lbl">Mifflin-St Jeor</span><span class="val">1.367 kcal</span></div>
+      <div class="data-row"><span class="lbl">Harris-Benedict</span><span class="val">1.412 kcal</span></div>
+      <div class="data-row"><span class="lbl">Katch-McArdle</span><span class="val">1.448 kcal</span></div>
+    </div>
+    <div class="card">
+      <div style="font-weight:500;margin-bottom:.75rem">¿Por qué usamos el valor de la báscula?</div>
+      <p style="font-size:14px;color:var(--ink-soft);line-height:1.65;margin-bottom:.75rem">Las fórmulas estadísticas calculan la TMB a partir del peso total, pero cuando hay mucha proporción de grasa y poca agua, suelen sobreestimar el gasto real.</p>
+      <p style="font-size:14px;color:var(--ink-soft);line-height:1.65">La báscula Tanita mide directamente mediante bioimpedancia y da un valor más conservador y ajustado a la realidad de Pepi. Todos los cálculos de este plan parten de 1.416 kcal.</p>
+    </div>
+  </div>
+
+  <div class="section-head"><h2>Actividad física y gasto total</h2><div class="section-line"></div></div>
+
+  <div class="card" style="margin-bottom:1rem">
+    <div class="data-row"><span class="lbl">Actividad declarada</span><span class="val">Yoga 2×/semana + pasos en aumento</span></div>
+    <div class="data-row"><span class="lbl">Factor aplicado</span><span class="val">× 1,30 (sedentaria-ligera)</span></div>
+    <div class="data-row"><span class="lbl">Gasto total diario estimado (TDEE)</span><span class="val" style="color:var(--sage)">1.841 kcal/día</span></div>
+    <div class="data-row"><span class="lbl">Si consolida 7.000–8.000 pasos/día</span><span class="val">1.912 kcal/día (factor 1,35)</span></div>
+  </div>
+
+  <div class="section-head"><h2>Tensión arterial</h2><div class="section-line"></div></div>
+  <div class="band band-warn" style="margin-bottom:1rem">
+    <strong>Presión: 150 / 129 mmHg — leve riesgo</strong>
+    Sistólica en zona de leve riesgo (ref. 140–160). Diastólica también elevada. Reducir sodio, aumentar alimentos ricos en potasio (espinacas, acelga) y mejorar la hidratación son los tres pasos que más impacto tienen. Si no hay seguimiento médico activo, convendría consultarlo.
+  </div>
+
+</div><!-- /panel-informe -->
+
+
+<!-- ═══════════════════════════════════════ PANEL 2: DÉFICIT ════════════════════════════════════ -->
+<div id="panel-deficit" class="panel">
+
+  <div class="section-head"><h2>Por qué el déficit pequeño no es conformismo</h2><div class="section-line"></div></div>
+
+  <div class="band band-info" style="margin-bottom:1.25rem">
+    <strong>La historia de Pepi lo explica mejor que cualquier fórmula</strong>
+    Anteriormente hizo dieta y perdió muchos kilos. Después, con un plan demasiado restrictivo, no ha podido mantenerse. Eso no es falta de voluntad: es fisiología.
+  </div>
+
+  <div class="g2" style="margin-bottom:1.5rem">
+    <div class="card">
+      <div style="font-weight:500;margin-bottom:.75rem">Qué pasa con déficits grandes (&gt;400 kcal)</div>
+      <p style="font-size:14px;color:var(--ink-soft);line-height:1.65;margin-bottom:.5rem">Cuando comemos muy poco, el cuerpo sube el cortisol (la hormona del estrés). El cortisol activa el hambre hedónica — esa sensación de que "necesitas" algo dulce o denso aunque acabes de comer.</p>
+      <p style="font-size:14px;color:var(--ink-soft);line-height:1.65">Si además hay ansiedad de base, el efecto se multiplica: el sistema nervioso ya está activado, el cortisol se dispara antes y con más intensidad. La rotura del plan es casi inevitable, no una debilidad.</p>
+    </div>
+    <div class="card">
+      <div style="font-weight:500;margin-bottom:.75rem">Qué pasa con un déficit pequeño (200–300 kcal)</div>
+      <p style="font-size:14px;color:var(--ink-soft);line-height:1.65;margin-bottom:.5rem">El cortisol no se dispara. La señal de hambre permanece regulada. El músculo se preserva (el músculo quema más calorías que la grasa, por lo que conservarlo acelera el metabolismo a largo plazo).</p>
+      <p style="font-size:14px;color:var(--ink-soft);line-height:1.65">La pérdida es más lenta visualmente, pero la adherencia es alta. A los 6 meses, quien sigue el plan moderado ha perdido más que quien abandonó el restrictivo al mes.</p>
+    </div>
+  </div>
+
+  <div class="section-head"><h2>Números del plan</h2><div class="section-line"></div></div>
+
+  <div class="metrics-grid" style="margin-bottom:1.25rem">
+    <div class="metric-tile" style="border-color:var(--sage-mid)"><div class="metric-label">TDEE estimado</div><div class="metric-value" style="font-size:1.4rem">1.841 kcal</div><div class="metric-sub">gasto diario total</div></div>
+    <div class="metric-tile" style="border-color:var(--sage-mid)"><div class="metric-label">Objetivo calórico</div><div class="metric-value" style="font-size:1.4rem;color:var(--sage)">1.580 kcal</div><div class="metric-sub">déficit de 261 kcal</div></div>
+    <div class="metric-tile"><div class="metric-label">Pérdida esperada</div><div class="metric-value" style="font-size:1.4rem">~1 kg</div><div class="metric-sub">por mes sostenido</div></div>
+    <div class="metric-tile"><div class="metric-label">Proteína mínima</div><div class="metric-value" style="font-size:1.4rem">75 g</div><div class="metric-sub">diarios en este plan</div></div>
+  </div>
+
+  <div class="section-head"><h2>Distribución de macronutrientes</h2><div class="section-line"></div></div>
+
+  <div class="card" style="margin-bottom:1.25rem">
+    <div class="macro-row">
+      <div class="macro-header"><span class="name">Proteínas — 75 g/día</span><span class="amount">300 kcal · 19%</span></div>
+      <div class="macro-track"><div class="macro-fill" style="width:19%;background:var(--sage)"></div></div>
+      <p style="font-size:13px;color:var(--ink-muted);margin-top:5px">Preserva el músculo durante la pérdida de peso y sacia más por caloría que carbohidratos o grasas.</p>
+    </div>
+    <div class="macro-row">
+      <div class="macro-header"><span class="name">Grasas — 58 g/día</span><span class="amount">520 kcal · 33%</span></div>
+      <div class="macro-track"><div class="macro-fill" style="width:33%;background:var(--amber)"></div></div>
+      <p style="font-size:13px;color:var(--ink-muted);margin-top:5px">Necesarias para absorber vitaminas, regular hormonas y mantener la saciedad entre comidas. Priorizamos aceite de oliva, pescado azul y huevo.</p>
+    </div>
+    <div class="macro-row">
+      <div class="macro-header"><span class="name">Carbohidratos — 190 g/día</span><span class="amount">760 kcal · 48%</span></div>
+      <div class="macro-track"><div class="macro-fill" style="width:48%;background:var(--terracotta)"></div></div>
+      <p style="font-size:13px;color:var(--ink-muted);margin-top:5px">Fuente principal de energía. Priorizamos fuentes de absorción lenta (arroz, patata, avena, pan integral) que no disparan el azúcar en sangre.</p>
+    </div>
+  </div>
+
+</div><!-- /panel-deficit -->
+
+
+<!-- ═══════════════════════════════════════ PANEL 3: DIETA ════════════════════════════════════ -->
+<div id="panel-dieta" class="panel">
+
+  <!-- MACRO + TOLERANCIAS -->
+  <div class="section-head"><h2>Macronutrientes y tolerancias</h2><div class="section-line"></div></div>
+
+  <div class="g3" style="margin-bottom:1.25rem">
+    <div>
+      <div style="font-size:12px;font-weight:600;color:var(--terracotta);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Evitar siempre</div>
+      <div class="pill-group">
+        <span class="pill pill-no">Leche</span><span class="pill pill-no">Pimiento</span><span class="pill pill-no">Col</span><span class="pill pill-no">Coliflor</span><span class="pill pill-no">Espárragos</span><span class="pill pill-no">Champiñones</span><span class="pill pill-no">Cebolla cocida</span><span class="pill pill-no">Calçots</span><span class="pill pill-no">Lechuga</span><span class="pill pill-no">Uva</span><span class="pill pill-no">Melón</span><span class="pill pill-no">Pera</span><span class="pill pill-no">Piña</span><span class="pill pill-no">Legumbres</span>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:12px;font-weight:600;color:var(--sage);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Bien tolerados</div>
+      <div class="pill-group">
+        <span class="pill pill-yes">Endivias</span><span class="pill pill-yes">Espinacas crudas</span><span class="pill pill-yes">Acelga cruda</span><span class="pill pill-yes">Yogur (máx. 2/día)</span><span class="pill pill-yes">Salmón</span><span class="pill pill-yes">Lubina</span><span class="pill pill-yes">Mejillones</span><span class="pill pill-yes">Sardinas</span>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:12px;font-weight:600;color:var(--amber);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Con moderación</div>
+      <div class="pill-group">
+        <span class="pill pill-maybe">Tomate</span><span class="pill pill-maybe">Pasta</span><span class="pill pill-maybe">Calabacín</span>
+      </div>
+      <div style="font-size:13px;color:var(--ink-muted);margin-top:.75rem">Probar en pequeñas cantidades. Si sienta bien, incluir. Si no, sustituir por arroz o patata.</div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- SEÑALES INTESTINALES -->
+  <div class="section-head"><h2>Lo que dice el análisis intestinal (en palabras sencillas)</h2><div class="section-line"></div></div>
+
+  <div class="signal-card" style="margin-bottom:10px">
+    <div class="signal-head" style="background:var(--terracotta-light)"><div class="dot" style="background:var(--terracotta)"></div>Las bacterias buenas están un poco bajas</div>
+    <div class="signal-body">El análisis muestra un equilibrio bacteriano por debajo de lo ideal. Hay dos tipos de bacterias que están más altas de lo recomendable y pueden provocar molestias digestivas, gases o heces irregulares. Esto también contribuye a sentirse hinchada o con malestar después de comer ciertos alimentos — no es imaginación, tiene una base real.</div>
+    <div class="signal-action">La dieta incluye yogur natural, avena y alimentos fermentados suaves para ir recuperando el equilibrio.</div>
+  </div>
+
+  <div class="signal-card" style="margin-bottom:10px">
+    <div class="signal-head" style="background:var(--amber-light)"><div class="dot" style="background:var(--amber)"></div>Los nervios y el intestino están conectados — y en su caso, más de lo habitual</div>
+    <div class="signal-body">Hay un mensajero químico en el intestino llamado GABA que ayuda a calmar el sistema nervioso. En el análisis de Pepi hay demasiadas bacterias que consumen ese GABA antes de que pueda actuar. Esto puede estar amplificando la sensación de ansiedad y los nervios — el intestino no es solo digestión, es también estado de ánimo.</div>
+    <div class="signal-action">El yogur natural, la avena y las verduras de hoja verde ayudan a que esas bacterias beneficiosas recuperen terreno.</div>
+  </div>
+
+  <div class="signal-card" style="margin-bottom:10px">
+    <div class="signal-head" style="background:var(--sage-light)"><div class="dot" style="background:var(--sage)"></div>La lista de alimentos que sientan mal tiene una explicación intestinal</div>
+    <div class="signal-body">Muchos de los alimentos que Pepi no tolera (col, coliflor, cebolla cocida, legumbres, ciertas frutas) son alimentos que fermentan mucho en el intestino. Cuando la microbiota está desequilibrada, esa fermentación produce más gas y más molestia de lo normal. No es una intolerancia permanente — puede mejorar con el tiempo.</div>
+    <div class="signal-action">Este plan evita esos alimentos completamente durante las primeras semanas, para que el intestino descanse y se vaya regulando.</div>
+  </div>
+
+  <div class="signal-card" style="margin-bottom:10px">
+    <div class="signal-head" style="background:#EEF4FF"><div class="dot" style="background:#5680C2"></div>El agua corporal está baja</div>
+    <div class="signal-body">El cuerpo tiene un 39,9% de agua cuando lo normal en mujeres es entre 45–60%. Cuando el cuerpo está poco hidratado, confunde sed con hambre y la señal de saciedad llega tarde o no llega bien. También aumenta la sensación de fatiga. Beber más no es un consejo genérico aquí — es una necesidad real.</div>
+    <div class="signal-action">Objetivo diario: 1,8 L de agua. El plan incluye caldos ligeros en cena para sumar hidratación sin esfuerzo.</div>
+  </div>
+
+  <hr class="div">
+
+  <!-- PROPIEDADES NO DIETÉTICAS -->
+  <div class="section-head"><h2>Otras recomendaciones (no son dieta, pero importan igual)</h2><div class="section-line"></div></div>
+
+  <div class="g2" style="margin-bottom:1.5rem">
+    <div class="card-sm">
+      <div style="font-weight:500;margin-bottom:.5rem">Tensión arterial</div>
+      <p style="font-size:14px;color:var(--ink-soft)">Con 150/129 mmHg, hay una señal de alerta cardiovascular leve. La dieta ayuda (menos sal, más potasio), pero si no hay seguimiento médico activo para esto, conviene mencionárselo al médico de cabecera.</p>
+    </div>
+    <div class="card-sm">
+      <div style="font-weight:500;margin-bottom:.5rem">El yoga y los pasos</div>
+      <p style="font-size:14px;color:var(--ink-soft)">El yoga 2 veces por semana es excelente para el cortisol. Aumentar los pasos diarios hasta 7.000–8.000 incrementa el gasto sin añadir estrés al cuerpo. No hace falta caminar rápido — caminar cuenta.</p>
+    </div>
+    <div class="card-sm">
+      <div style="font-weight:500;margin-bottom:.5rem">El sueño</div>
+      <p style="font-size:14px;color:var(--ink-soft)">Dormir menos de 7 horas sube el cortisol y la grelina (la hormona del hambre). Si el sueño es irregular o insuficiente, la adherencia a cualquier plan nutricional cae significativamente.</p>
+    </div>
+    <div class="card-sm">
+      <div style="font-weight:500;margin-bottom:.5rem">No pesar alimentos al principio</div>
+      <p style="font-size:14px;color:var(--ink-soft)">Las primeras semanas, seguir el plan por comidas y raciones es suficiente. Los pesos de este documento sirven de referencia cuando ya haya confianza con el plan — pesar desde el primer día puede generar más ansiedad.</p>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- DIETA SEMANAL -->
+  <div class="section-head"><h2>Plan semanal · 1.580 kcal/día</h2><div class="section-line"></div></div>
+  <p style="font-size:13.5px;color:var(--ink-muted);margin-bottom:1.25rem">Todos los pesos son en <strong>crudo</strong>. Aceite de oliva virgen extra en todas las comidas: 1 cucharada sopera (10 ml) por comida principal. Sal moderada. Infusiones sin azúcar entre horas.</p>
+
+  <div class="day-nav">
+    <button class="day-btn active" onclick="showDay('lun')">Lunes</button>
+    <button class="day-btn" onclick="showDay('mar')">Martes</button>
+    <button class="day-btn" onclick="showDay('mie')">Miércoles</button>
+    <button class="day-btn" onclick="showDay('jue')">Jueves</button>
+    <button class="day-btn" onclick="showDay('vie')">Viernes</button>
+    <button class="day-btn" onclick="showDay('sab')">Sábado</button>
+    <button class="day-btn" onclick="showDay('dom')">Domingo</button>
+  </div>
+
+  <!-- LUNES -->
+  <div id="day-lun" class="day-panel active">
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-deayuno">☀️</div><div class="meal-name">Desayuno</div></div>
+        <div class="meal-kcal">~340 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Yogur natural entero (sin azúcar)</span><span class="food-weight">125 g · 1 unidad</span></div>
+        <div class="food-line"><span class="food-name">Avena en copos finos (seca)</span><span class="food-weight">40 g</span></div>
+        <div class="food-line"><span class="food-name">Manzana troceada (sin piel si prefiere)</span><span class="food-weight">100 g · ½ manzana mediana</span></div>
+        <div class="food-line"><span class="food-name">Canela al gusto</span><span class="food-weight">opcional</span></div>
+        <div class="food-note">Preparar la noche anterior: mezclar todo en un tarro, queda listo para llevarse al taller.</div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-media">🍎</div><div class="meal-name">Media mañana</div></div>
+        <div class="meal-kcal">~120 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Manzana entera</span><span class="food-weight">150 g</span></div>
+        <div class="food-line"><span class="food-name">Nueces</span><span class="food-weight">15 g · 3 nueces</span></div>
+        <div class="food-note">Fácil de llevar en el bolso. Sin refrigeración.</div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-comida">🍽️</div><div class="meal-name">Comida</div></div>
+        <div class="meal-kcal">~560 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Arroz blanco (seco)</span><span class="food-weight">70 g</span></div>
+        <div class="food-line"><span class="food-name">Pechuga de pollo a la plancha</span><span class="food-weight">150 g</span></div>
+        <div class="food-line"><span class="food-name">Espinacas crudas en ensalada</span><span class="food-weight">60 g</span></div>
+        <div class="food-line"><span class="food-name">Tomate natural (si tolera)</span><span class="food-weight">80 g · ½ tomate</span></div>
+        <div class="food-line"><span class="food-name">Aceite de oliva virgen extra</span><span class="food-weight">10 ml · 1 cucharada</span></div>
+        <div class="food-note">Se puede preparar en fiambrera la noche anterior. El arroz aguanta bien en frío.</div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-merienda">🫙</div><div class="meal-name">Merienda</div></div>
+        <div class="meal-kcal">~150 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Yogur natural entero</span><span class="food-weight">125 g</span></div>
+        <div class="food-line"><span class="food-name">Melocotón o nectarina</span><span class="food-weight">120 g · 1 pieza</span></div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-cena">🌙</div><div class="meal-name">Cena</div></div>
+        <div class="meal-kcal">~410 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Salmón al horno o a la plancha</span><span class="food-weight">150 g</span></div>
+        <div class="food-line"><span class="food-name">Patata hervida o al horno</span><span class="food-weight">180 g · 1 patata mediana</span></div>
+        <div class="food-line"><span class="food-name">Acelga cruda en ensalada</span><span class="food-weight">60 g</span></div>
+        <div class="food-line"><span class="food-name">Aceite de oliva virgen extra</span><span class="food-weight">10 ml</span></div>
+        <div class="food-note">El salmón en 12 minutos de horno a 180°C. La patata se puede cocer antes.</div>
+      </div>
+    </div>
+    <div class="day-total">
+      <div class="dtotal-item"><strong>~1.580</strong> kcal totales</div>
+      <div class="dtotal-item"><strong>~76g</strong> proteínas</div>
+      <div class="dtotal-item"><strong>~58g</strong> grasas</div>
+      <div class="dtotal-item"><strong>~190g</strong> hidratos</div>
+    </div>
+  </div>
+
+  <!-- MARTES -->
+  <div id="day-mar" class="day-panel">
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-deayuno">☀️</div><div class="meal-name">Desayuno</div></div>
+        <div class="meal-kcal">~330 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Pan integral de trigo</span><span class="food-weight">60 g · 2 rebanadas</span></div>
+        <div class="food-line"><span class="food-name">Huevo cocido o a la plancha</span><span class="food-weight">60 g · 1 huevo grande</span></div>
+        <div class="food-line"><span class="food-name">Tomate natural en rodajas (si tolera)</span><span class="food-weight">80 g</span></div>
+        <div class="food-line"><span class="food-name">Aceite de oliva virgen extra</span><span class="food-weight">5 ml · 1 cucharadita</span></div>
+        <div class="food-note">Huevo cocido de la noche anterior. Pan en una bolsita, tomate aparte.</div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-media">🍎</div><div class="meal-name">Media mañana</div></div>
+        <div class="meal-kcal">~130 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Plátano maduro</span><span class="food-weight">100 g · 1 pieza pequeña</span></div>
+        <div class="food-line"><span class="food-name">Almendras crudas</span><span class="food-weight">15 g · 12 almendras</span></div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-comida">🍽️</div><div class="meal-name">Comida</div></div>
+        <div class="meal-kcal">~570 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Patata hervida</span><span class="food-weight">200 g</span></div>
+        <div class="food-line"><span class="food-name">Merluza al horno o hervida</span><span class="food-weight">180 g</span></div>
+        <div class="food-line"><span class="food-name">Endivias en ensalada</span><span class="food-weight">80 g · 1 endivia</span></div>
+        <div class="food-line"><span class="food-name">Zanahoria rallada cruda</span><span class="food-weight">60 g</span></div>
+        <div class="food-line"><span class="food-name">Aceite de oliva virgen extra + limón</span><span class="food-weight">10 ml</span></div>
+        <div class="food-note">Merluza y patata cocidas la noche anterior, endivia y zanahoria en fiambrera aparte.</div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-merienda">🫙</div><div class="meal-name">Merienda</div></div>
+        <div class="meal-kcal">~140 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Yogur natural entero</span><span class="food-weight">125 g</span></div>
+        <div class="food-line"><span class="food-name">Naranja</span><span class="food-weight">150 g · 1 naranja mediana</span></div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-cena">🌙</div><div class="meal-name">Cena</div></div>
+        <div class="meal-kcal">~410 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Tortilla de 2 huevos</span><span class="food-weight">120 g · 2 huevos</span></div>
+        <div class="food-line"><span class="food-name">Espinacas salteadas en la tortilla o aparte</span><span class="food-weight">80 g crudas</span></div>
+        <div class="food-line"><span class="food-name">Pan integral</span><span class="food-weight">40 g · 1 rebanada</span></div>
+        <div class="food-line"><span class="food-name">Caldo de verduras casero (zanahoria, apio, puerro)</span><span class="food-weight">200 ml</span></div>
+        <div class="food-note">El caldo aporta hidratación y minerales. Prepararlo en cantidad y congelar en bricks.</div>
+      </div>
+    </div>
+    <div class="day-total">
+      <div class="dtotal-item"><strong>~1.580</strong> kcal totales</div>
+      <div class="dtotal-item"><strong>~78g</strong> proteínas</div>
+      <div class="dtotal-item"><strong>~56g</strong> grasas</div>
+      <div class="dtotal-item"><strong>~188g</strong> hidratos</div>
+    </div>
+  </div>
+
+  <!-- MIÉRCOLES -->
+  <div id="day-mie" class="day-panel">
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-deayuno">☀️</div><div class="meal-name">Desayuno</div></div>
+        <div class="meal-kcal">~340 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Avena en copos finos (seca)</span><span class="food-weight">45 g</span></div>
+        <div class="food-line"><span class="food-name">Leche de avena sin azúcar (o agua)</span><span class="food-weight">200 ml</span></div>
+        <div class="food-line"><span class="food-name">Plátano maduro</span><span class="food-weight">100 g</span></div>
+        <div class="food-note">Porridge caliente: hervir 3 minutos. En taller, hervir en casa y guardar en termo de boca ancha.</div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-media">🍎</div><div class="meal-name">Media mañana</div></div>
+        <div class="meal-kcal">~120 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Manzana</span><span class="food-weight">150 g</span></div>
+        <div class="food-line"><span class="food-name">Nueces</span><span class="food-weight">15 g · 3 nueces</span></div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-comida">🍽️</div><div class="meal-name">Comida</div></div>
+        <div class="meal-kcal">~555 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Sardinas en lata al natural (escurridas)</span><span class="food-weight">120 g · 1 lata grande</span></div>
+        <div class="food-line"><span class="food-name">Pan integral</span><span class="food-weight">60 g · 2 rebanadas</span></div>
+        <div class="food-line"><span class="food-name">Espinacas crudas</span><span class="food-weight">60 g</span></div>
+        <div class="food-line"><span class="food-name">Zanahoria en bastones</span><span class="food-weight">80 g</span></div>
+        <div class="food-line"><span class="food-name">Aceite de oliva + limón</span><span class="food-weight">10 ml</span></div>
+        <div class="food-note">La lata no necesita frío hasta abrir. Comida de taller sin preparación.</div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-merienda">🫙</div><div class="meal-name">Merienda</div></div>
+        <div class="meal-kcal">~150 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Yogur natural entero</span><span class="food-weight">125 g</span></div>
+        <div class="food-line"><span class="food-name">Melocotón</span><span class="food-weight">130 g · 1 pieza</span></div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-cena">🌙</div><div class="meal-name">Cena</div></div>
+        <div class="meal-kcal">~415 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Muslo de pollo al horno (sin piel)</span><span class="food-weight">180 g</span></div>
+        <div class="food-line"><span class="food-name">Arroz blanco</span><span class="food-weight">60 g seco</span></div>
+        <div class="food-line"><span class="food-name">Zanahoria hervida</span><span class="food-weight">100 g</span></div>
+        <div class="food-line"><span class="food-name">Aceite de oliva</span><span class="food-weight">10 ml</span></div>
+      </div>
+    </div>
+    <div class="day-total">
+      <div class="dtotal-item"><strong>~1.580</strong> kcal totales</div>
+      <div class="dtotal-item"><strong>~77g</strong> proteínas</div>
+      <div class="dtotal-item"><strong>~57g</strong> grasas</div>
+      <div class="dtotal-item"><strong>~191g</strong> hidratos</div>
+    </div>
+  </div>
+
+  <!-- JUEVES -->
+  <div id="day-jue" class="day-panel">
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-deayuno">☀️</div><div class="meal-name">Desayuno</div></div>
+        <div class="meal-kcal">~335 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Yogur natural entero</span><span class="food-weight">125 g</span></div>
+        <div class="food-line"><span class="food-name">Avena en copos finos</span><span class="food-weight">35 g</span></div>
+        <div class="food-line"><span class="food-name">Naranja exprimida</span><span class="food-weight">150 g · 1 naranja</span></div>
+        <div class="food-line"><span class="food-name">Tostada de pan integral</span><span class="food-weight">30 g · 1 rebanada</span></div>
+        <div class="food-note">El zumo de naranja natural aporta vitamina C que mejora la absorción del hierro de las espinacas.</div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-media">🍎</div><div class="meal-name">Media mañana</div></div>
+        <div class="meal-kcal">~125 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Plátano</span><span class="food-weight">100 g</span></div>
+        <div class="food-line"><span class="food-name">Almendras crudas</span><span class="food-weight">15 g</span></div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-comida">🍽️</div><div class="meal-name">Comida</div></div>
+        <div class="meal-kcal">~560 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Pechuga de pavo a la plancha</span><span class="food-weight">160 g</span></div>
+        <div class="food-line"><span class="food-name">Patata cocida</span><span class="food-weight">200 g</span></div>
+        <div class="food-line"><span class="food-name">Endivias con zanahoria rallada</span><span class="food-weight">80 g endivias + 60 g zanahoria</span></div>
+        <div class="food-line"><span class="food-name">Aceite de oliva + vinagre de manzana</span><span class="food-weight">10 ml</span></div>
+        <div class="food-note">El vinagre de manzana ayuda a modular el azúcar en sangre tras la comida. Aliña bien la endivia.</div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-merienda">🫙</div><div class="meal-name">Merienda</div></div>
+        <div class="meal-kcal">~140 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Yogur natural</span><span class="food-weight">125 g</span></div>
+        <div class="food-line"><span class="food-name">Manzana</span><span class="food-weight">120 g</span></div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-cena">🌙</div><div class="meal-name">Cena</div></div>
+        <div class="meal-kcal">~420 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Lubina al horno con limón y tomillo</span><span class="food-weight">160 g</span></div>
+        <div class="food-line"><span class="food-name">Arroz integral cocido</span><span class="food-weight">60 g seco</span></div>
+        <div class="food-line"><span class="food-name">Acelga cruda aliñada</span><span class="food-weight">70 g</span></div>
+        <div class="food-line"><span class="food-name">Aceite de oliva</span><span class="food-weight">10 ml</span></div>
+        <div class="food-note">El arroz integral tiene más fibra que el blanco y favorece la microbiota. Si no lo tiene en casa, arroz blanco está bien también.</div>
+      </div>
+    </div>
+    <div class="day-total">
+      <div class="dtotal-item"><strong>~1.580</strong> kcal totales</div>
+      <div class="dtotal-item"><strong>~79g</strong> proteínas</div>
+      <div class="dtotal-item"><strong>~55g</strong> grasas</div>
+      <div class="dtotal-item"><strong>~192g</strong> hidratos</div>
+    </div>
+  </div>
+
+  <!-- VIERNES -->
+  <div id="day-vie" class="day-panel">
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-deayuno">☀️</div><div class="meal-name">Desayuno</div></div>
+        <div class="meal-kcal">~330 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Pan integral</span><span class="food-weight">60 g · 2 rebanadas</span></div>
+        <div class="food-line"><span class="food-name">Queso fresco tipo Burgos</span><span class="food-weight">60 g</span></div>
+        <div class="food-line"><span class="food-name">Tomate en rodajas (si tolera)</span><span class="food-weight">80 g</span></div>
+        <div class="food-line"><span class="food-name">Aceite de oliva</span><span class="food-weight">5 ml</span></div>
+        <div class="food-note">El queso fresco tiene proteína y calcio con poca grasa. Alternativa al huevo.</div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-media">🍎</div><div class="meal-name">Media mañana</div></div>
+        <div class="meal-kcal">~120 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Nectarina o melocotón</span><span class="food-weight">130 g</span></div>
+        <div class="food-line"><span class="food-name">Nueces</span><span class="food-weight">15 g</span></div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-comida">🍽️</div><div class="meal-name">Comida</div></div>
+        <div class="meal-kcal">~565 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Mejillones al vapor (sin caldo)</span><span class="food-weight">200 g (con concha) → ~80 g limpio</span></div>
+        <div class="food-line"><span class="food-name">Patata hervida</span><span class="food-weight">200 g</span></div>
+        <div class="food-line"><span class="food-name">Espinacas crudas</span><span class="food-weight">60 g</span></div>
+        <div class="food-line"><span class="food-name">Zanahoria cruda rallada</span><span class="food-weight">60 g</span></div>
+        <div class="food-line"><span class="food-name">Aceite de oliva + limón</span><span class="food-weight">10 ml</span></div>
+        <div class="food-note">Los mejillones son ricos en zinc y selenio — favorecen la respuesta inmune intestinal. Si prefiere lata (mejillones en agua), válido también.</div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-merienda">🫙</div><div class="meal-name">Merienda</div></div>
+        <div class="meal-kcal">~145 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Yogur natural entero</span><span class="food-weight">125 g</span></div>
+        <div class="food-line"><span class="food-name">Plátano pequeño</span><span class="food-weight">80 g</span></div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-cena">🌙</div><div class="meal-name">Cena</div></div>
+        <div class="meal-kcal">~420 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Tortilla de 2 huevos con calabacín (si tolera)</span><span class="food-weight">120 g huevo + 100 g calabacín</span></div>
+        <div class="food-line"><span class="food-name">Pan integral</span><span class="food-weight">50 g</span></div>
+        <div class="food-line"><span class="food-name">Endivias con aceite y sal</span><span class="food-weight">80 g</span></div>
+        <div class="food-note">Si el calabacín no sienta bien, sustituir por zanahoria cocida.</div>
+      </div>
+    </div>
+    <div class="day-total">
+      <div class="dtotal-item"><strong>~1.580</strong> kcal totales</div>
+      <div class="dtotal-item"><strong>~76g</strong> proteínas</div>
+      <div class="dtotal-item"><strong>~58g</strong> grasas</div>
+      <div class="dtotal-item"><strong>~189g</strong> hidratos</div>
+    </div>
+  </div>
+
+  <!-- SÁBADO -->
+  <div id="day-sab" class="day-panel">
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-deayuno">☀️</div><div class="meal-name">Desayuno (en casa, sin prisa)</div></div>
+        <div class="meal-kcal">~360 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Huevos revueltos o a la plancha</span><span class="food-weight">120 g · 2 huevos</span></div>
+        <div class="food-line"><span class="food-name">Pan integral tostado</span><span class="food-weight">60 g · 2 rebanadas</span></div>
+        <div class="food-line"><span class="food-name">Tomate en rodajas (si tolera)</span><span class="food-weight">80 g</span></div>
+        <div class="food-line"><span class="food-name">Aceite de oliva</span><span class="food-weight">5 ml</span></div>
+        <div class="food-line"><span class="food-name">Naranja entera o en zumo</span><span class="food-weight">150 g</span></div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-media">🍎</div><div class="meal-name">Media mañana</div></div>
+        <div class="meal-kcal">~110 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Yogur natural</span><span class="food-weight">125 g</span></div>
+        <div class="food-line"><span class="food-name">Canela al gusto</span><span class="food-weight">—</span></div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-comida">🍽️</div><div class="meal-name">Comida</div></div>
+        <div class="meal-kcal">~570 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Salmón al horno con limón y eneldo</span><span class="food-weight">160 g</span></div>
+        <div class="food-line"><span class="food-name">Arroz blanco</span><span class="food-weight">70 g seco</span></div>
+        <div class="food-line"><span class="food-name">Zanahoria y apio hervidos</span><span class="food-weight">100 g zanahoria + 60 g apio</span></div>
+        <div class="food-line"><span class="food-name">Aceite de oliva</span><span class="food-weight">10 ml</span></div>
+        <div class="food-note">Sábado con tiempo: se puede hacer una bandeja de horno completa en 20 minutos.</div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-merienda">🫙</div><div class="meal-name">Merienda</div></div>
+        <div class="meal-kcal">~130 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Manzana</span><span class="food-weight">150 g</span></div>
+        <div class="food-line"><span class="food-name">Almendras</span><span class="food-weight">15 g</span></div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-cena">🌙</div><div class="meal-name">Cena</div></div>
+        <div class="meal-kcal">~410 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Caldo casero de verduras</span><span class="food-weight">250 ml</span></div>
+        <div class="food-line"><span class="food-name">Pechuga de pollo a la plancha</span><span class="food-weight">140 g</span></div>
+        <div class="food-line"><span class="food-name">Patata al horno</span><span class="food-weight">180 g</span></div>
+        <div class="food-line"><span class="food-name">Endivias</span><span class="food-weight">80 g</span></div>
+        <div class="food-line"><span class="food-name">Aceite de oliva</span><span class="food-weight">10 ml</span></div>
+      </div>
+    </div>
+    <div class="day-total">
+      <div class="dtotal-item"><strong>~1.580</strong> kcal totales</div>
+      <div class="dtotal-item"><strong>~77g</strong> proteínas</div>
+      <div class="dtotal-item"><strong>~57g</strong> grasas</div>
+      <div class="dtotal-item"><strong>~190g</strong> hidratos</div>
+    </div>
+  </div>
+
+  <!-- DOMINGO -->
+  <div id="day-dom" class="day-panel">
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-deayuno">☀️</div><div class="meal-name">Desayuno</div></div>
+        <div class="meal-kcal">~345 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Yogur natural entero</span><span class="food-weight">125 g</span></div>
+        <div class="food-line"><span class="food-name">Avena en copos finos</span><span class="food-weight">40 g</span></div>
+        <div class="food-line"><span class="food-name">Melocotón o nectarina troceada</span><span class="food-weight">120 g</span></div>
+        <div class="food-line"><span class="food-name">Nueces troceadas</span><span class="food-weight">10 g · 2 nueces</span></div>
+        <div class="food-note">Overnight oats del sábado noche. El domingo es para disfrutar el desayuno.</div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-media">🍎</div><div class="meal-name">Media mañana</div></div>
+        <div class="meal-kcal">~110 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Naranja</span><span class="food-weight">150 g</span></div>
+        <div class="food-line"><span class="food-name">Almendras</span><span class="food-weight">12 g</span></div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-comida">🍽️</div><div class="meal-name">Comida (domingo en familia)</div></div>
+        <div class="meal-kcal">~580 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Pollo al horno (muslo sin piel)</span><span class="food-weight">200 g</span></div>
+        <div class="food-line"><span class="food-name">Patata al horno con hierbas</span><span class="food-weight">200 g</span></div>
+        <div class="food-line"><span class="food-name">Zanahoria y apio asados en la misma bandeja</span><span class="food-weight">80 g zanahoria + 60 g apio</span></div>
+        <div class="food-line"><span class="food-name">Aceite de oliva + ajo + romero</span><span class="food-weight">10 ml</span></div>
+        <div class="food-note">Plato de domingo que encaja con cualquier mesa familiar. Sin extras de sauce ni mayonesa.</div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-merienda">🫙</div><div class="meal-name">Merienda</div></div>
+        <div class="meal-kcal">~130 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Yogur natural</span><span class="food-weight">125 g</span></div>
+        <div class="food-line"><span class="food-name">Plátano pequeño</span><span class="food-weight">80 g</span></div>
+      </div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-header">
+        <div class="meal-time"><div class="meal-icon icon-cena">🌙</div><div class="meal-name">Cena ligera</div></div>
+        <div class="meal-kcal">~415 kcal</div>
+      </div>
+      <div class="meal-body">
+        <div class="food-line"><span class="food-name">Sardinas frescas a la plancha (o en lata)</span><span class="food-weight">150 g</span></div>
+        <div class="food-line"><span class="food-name">Pan integral</span><span class="food-weight">50 g · 1,5 rebanadas</span></div>
+        <div class="food-line"><span class="food-name">Ensalada de endivias y zanahoria rallada</span><span class="food-weight">80 g endivias + 60 g zanahoria</span></div>
+        <div class="food-line"><span class="food-name">Aceite de oliva + limón</span><span class="food-weight">10 ml</span></div>
+        <div class="food-note">Cena ligera para compensar la comida de domingo. Las sardinas son el pescado más económico y nutritivo del plan.</div>
+      </div>
+    </div>
+    <div class="day-total">
+      <div class="dtotal-item"><strong>~1.580</strong> kcal totales</div>
+      <div class="dtotal-item"><strong>~76g</strong> proteínas</div>
+      <div class="dtotal-item"><strong>~58g</strong> grasas</div>
+      <div class="dtotal-item"><strong>~190g</strong> hidratos</div>
+    </div>
+  </div>
+
+  <!-- NOTAS FINALES -->
+  <hr class="div">
+  <div class="card" style="margin-top:.5rem">
+    <div style="font-weight:500;margin-bottom:.75rem">Notas generales del plan</div>
+    <div class="data-row"><span class="lbl">Aceite de oliva</span><span class="val" style="font-size:13px">10 ml (1 cucharada) por comida principal. Contar como grasa buena.</span></div>
+    <div class="data-row"><span class="lbl">Sal</span><span class="val" style="font-size:13px">Reducida. Sustituir por limón, vinagre de manzana o hierbas.</span></div>
+    <div class="data-row"><span class="lbl">Bebida</span><span class="val" style="font-size:13px">Agua entre comidas, 1,8 L mínimo. Infusiones sin azúcar. Sin refrescos.</span></div>
+    <div class="data-row"><span class="lbl">Yogur</span><span class="val" style="font-size:13px">Natural entero, sin azúcar ni edulcorantes. Máximo 2 unidades al día.</span></div>
+    <div class="data-row"><span class="lbl">Preparación en taller</span><span class="val" style="font-size:13px">Todo lo que va en fiambrera se prepara la noche anterior. Latas de sardinas y mejillones: sin preparación.</span></div>
+    <div class="data-row"><span class="lbl">Flexibilidad</span><span class="val" style="font-size:13px">Si un día se sale del plan, no pasa nada. El siguiente se retoma. No compensar con restricción.</span></div>
+  </div>
+
+</div><!-- /panel-dieta -->
+
+</div><!-- /main -->
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function showDay(id) {
+  document.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('day-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>
